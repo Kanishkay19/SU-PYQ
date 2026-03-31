@@ -23,6 +23,8 @@ router.post(
   async (req, res) => {
     try {
       const { subject, year, semester } = req.body;
+      console.log("File received:", req.file);
+      console.log("Body received:", req.body);
       const paper = await Paper.create({
         subject,
         year:          parseInt(year),
@@ -33,11 +35,11 @@ router.post(
       });
       res.status(201).json(paper);
     } catch (err) {
+      console.log("Upload error details:", err.message, err.stack);
       res.status(500).json({ message: "Upload failed", error: err.message });
     }
   }
 );
-
 // DELETE paper (admin only)
 router.delete("/:id", requireAuth, requireAdmin, async (req, res) => {
   try {
