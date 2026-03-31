@@ -7,16 +7,13 @@ function isMobile() {
 
 function getViewUrl(url) {
   if (isMobile()) {
-    const pdfUrl = url.includes(".pdf") ? url : `${url}.pdf`;
-    return pdfUrl;
+    return url; // direct URL, now that PDF delivery is enabled it should work
   }
   return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}`;
 }
 
-function getDownloadUrl(url, fileName) {
-  const base = url.replace(/\/upload\/[^/]*\//, "/upload/");
-  const cleanName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
-  return base.replace("/upload/", `/upload/fl_attachment:${cleanName}/`);
+function getDownloadUrl(url) {
+  return url; // direct URL works for download too now that PDF delivery is enabled
 }
 
 export default function PaperCard({ paper, isAdmin, onDelete, style }) {
@@ -48,7 +45,7 @@ export default function PaperCard({ paper, isAdmin, onDelete, style }) {
         </button>
         <button
           className="card-btn card-btn-dl"
-          onClick={() => window.open(getDownloadUrl(paper.cloudinaryUrl, paper.fileName), "_blank")}
+          onClick={() => window.open(getDownloadUrl(paper.cloudinaryUrl), "_blank")}
         >
           <IconDownload /> Download
         </button>
