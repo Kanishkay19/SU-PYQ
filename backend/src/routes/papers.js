@@ -19,12 +19,20 @@ router.post(
   "/",
   requireAuth,
   requireAdmin,
-  upload.single("pdf"),
+  (req, res, next) => {
+    upload.single("pdf")(req, res, (err) => {
+      if (err) {
+        console.log("Multer/Cloudinary error:", JSON.stringify(err), err.message, err.stack);
+        return res.status(500).json({ message: "File upload failed", error: err.message });
+      }
+      next();
+    });
+  },
   async (req, res) => {
     try {
-      const { subject, year, semester } = req.body;
       console.log("File received:", req.file);
       console.log("Body received:", req.body);
+      const { subject, year, semester } = req.body;
       const paper = await Paper.create({
         subject,
         year:          parseInt(year),
@@ -35,7 +43,7 @@ router.post(
       });
       res.status(201).json(paper);
     } catch (err) {
-      console.log("Upload error details:", err.message, err.stack);
+      console.log("DB error:", err.message);
       res.status(500).json({ message: "Upload failed", error: err.message });
     }
   }
