@@ -23,17 +23,22 @@ export default function PaperCard({ paper, isAdmin, onDelete, style }) {
       <div className="card-uploaded">Uploaded: {fmtDate(paper.createdAt)}</div>
       <div className="card-actions">
         <button
-          className="card-btn card-btn-view"
-          onClick={() => window.open(paper.cloudinaryUrl, "_blank")}
-        >
-          <IconEye /> View
-        </button>
-        <button
-          className="card-btn card-btn-dl"
-          onClick={() => window.open(paper.cloudinaryUrl, "_blank")}
-        >
-          <IconDownload /> Download
-        </button>
+  className="card-btn card-btn-view"
+  onClick={() => window.open(paper.cloudinaryUrl, "_blank")}
+>
+  <IconEye /> View
+</button>
+
+// Download button — forces correct download with original filename
+<button
+  className="card-btn card-btn-dl"
+  onClick={() => {
+    const url = paper.cloudinaryUrl.replace("/upload/", "/upload/fl_attachment/");
+    window.open(url, "_blank");
+  }}
+>
+  <IconDownload /> Download
+</button>
       </div>
     </div>
   );

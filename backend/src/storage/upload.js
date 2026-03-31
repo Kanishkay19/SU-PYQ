@@ -20,6 +20,7 @@ const storage = new CloudinaryStorage({
       folder: "su-pyq",
       resource_type: "raw",
       allowed_formats: ["pdf"],
+      public_id: file.originalname.replace(".pdf", ""),
     };
   },
 });

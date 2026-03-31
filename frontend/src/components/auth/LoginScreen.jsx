@@ -65,8 +65,7 @@ export default function LoginScreen({ onLogin }) {
         </button>
         <div className="login-hint">
           <strong>Demo credentials</strong><br />
-          Student → <code>student / student123</code><br />
-          Admin → <code>admin / admin123</code>
+          Student → <code>student / student123</code>
         </div>
       </div>
     </div>

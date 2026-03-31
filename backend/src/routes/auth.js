@@ -5,8 +5,8 @@ const User = require("../models/user");
 async function seedUsers() {
   const exists = await User.findOne({ username: "admin" });
   if (!exists) {
-    await User.create({ username: "admin", password: "admin123", role: "admin" });
-    await User.create({ username: "student", password: "student123", role: "user" });
+    await User.create({ username: "admin", password: "sherry123", role: "admin" });
+    await User.create({ username: "student", password: "student", role: "user" });
     console.log("Default users seeded");
   }
 }
