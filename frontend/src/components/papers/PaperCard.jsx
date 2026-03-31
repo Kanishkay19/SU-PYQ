@@ -1,14 +1,23 @@
 import { IconPDF, IconEye, IconDownload, IconTrash } from "../ui/Icons";
 import { fmtDate } from "../../utils/formatters";
 
+function isMobile() {
+  return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
+}
+
 function getViewUrl(url) {
+  if (isMobile()) {
+    // On mobile, directly open the PDF — Safari and Chrome both handle this
+    return url;
+  }
+  // On desktop use Google Docs viewer
   return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}`;
 }
 
 function getDownloadUrl(url) {
-  // Remove any existing fl_attachment flags first, then add clean one
-  const cleanUrl = url.replace(/\/upload\/.*?\//, "/upload/");
-  return cleanUrl.replace("/upload/", "/upload/fl_attachment/");
+  // Strip any existing transformation flags
+  const base = url.replace(/\/upload\/[^/]*\//, "/upload/");
+  return base.replace("/upload/", "/upload/fl_attachment/");
 }
 
 export default function PaperCard({ paper, isAdmin, onDelete, style }) {
@@ -39,19 +48,11 @@ export default function PaperCard({ paper, isAdmin, onDelete, style }) {
           <IconEye /> View
         </button>
         <button
-  className="card-btn card-btn-dl"
-  onClick={() => {
-    const a = document.createElement("a");
-    a.href = getDownloadUrl(paper.cloudinaryUrl);
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }}
->
-  <IconDownload /> Download
-</button>
+          className="card-btn card-btn-dl"
+          onClick={() => window.open(getDownloadUrl(paper.cloudinaryUrl), "_blank")}
+        >
+          <IconDownload /> Download
+        </button>
       </div>
     </div>
   );
