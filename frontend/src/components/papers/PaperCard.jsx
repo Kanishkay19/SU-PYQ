@@ -2,13 +2,12 @@ import { IconPDF, IconEye, IconDownload, IconTrash } from "../ui/Icons";
 import { fmtDate } from "../../utils/formatters";
 
 function getViewUrl(url) {
-  // Add pdf content type flag for mobile browsers
-  return url.replace("/upload/", "/upload/fl_attachment:false/");
+  return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
 }
 
 function getDownloadUrl(url, fileName) {
-  // Force download with correct filename
-  return url.replace("/upload/", `/upload/fl_attachment:${fileName}/`);
+  const cleanName = fileName.replace(/[^a-zA-Z0-9_.-]/g, "_");
+  return url.replace("/upload/", `/upload/fl_attachment:${cleanName}/`);
 }
 
 export default function PaperCard({ paper, isAdmin, onDelete, style }) {
