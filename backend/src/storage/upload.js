@@ -13,12 +13,11 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => {
     const cleanName = file.originalname
       .replace(".pdf", "")
-      .replace(/[^a-zA-Z0-9_-]/g, "_"); // remove special characters
+      .replace(/[^a-zA-Z0-9_-]/g, "_");
     return {
       folder: "su-pyq",
       resource_type: "raw",
-      format: "pdf",
-      public_id: `${cleanName}_${Date.now()}`, // unique name
+      public_id: `${cleanName}_${Date.now()}`,
     };
   },
 });
