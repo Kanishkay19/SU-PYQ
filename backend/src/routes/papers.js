@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const cloudinary = require("cloudinary").v2;
-const Paper = require("../models/paper");
+const Paper = require("../models/Paper");
 const { requireAuth, requireAdmin } = require("../middleware/auth");
 const upload = require("../storage/upload");
+const supabase = require("../storage/supabase");
 
 // GET all papers
 router.get("/", requireAuth, async (req, res) => {
@@ -19,44 +19,60 @@ router.post(
   "/",
   requireAuth,
   requireAdmin,
-  (req, res, next) => {
-    upload.single("pdf")(req, res, (err) => {
-      if (err) {
-        console.log("Multer/Cloudinary error:", JSON.stringify(err), err.message, err.stack);
-        return res.status(500).json({ message: "File upload failed", error: err.message });
-      }
-      next();
-    });
-  },
+  upload.single("pdf"),
   async (req, res) => {
     try {
-      console.log("File received:", req.file);
-      console.log("Body received:", req.body);
       const { subject, year, semester } = req.body;
+      const fileName = `${Date.now()}_${req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from("papers")
+        .upload(fileName, req.file.buffer, {
+          contentType: "application/pdf",
+          upsert: false,
+        });
+
+      if (error) {
+        console.log("Supabase upload error:", error);
+        return res.status(500).json({ message: "File upload failed", error: error.message });
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from("papers")
+        .getPublicUrl(fileName);
+
       const paper = await Paper.create({
         subject,
-        year:          parseInt(year),
+        year: parseInt(year),
         semester,
-        fileName:      req.file.originalname,
-        cloudinaryUrl: req.file.path,
-        cloudinaryId:  req.file.filename,
+        fileName: req.file.originalname,
+        cloudinaryUrl: urlData.publicUrl, // reusing field name, now stores Supabase URL
+        cloudinaryId: fileName,           // reusing field name, now stores Supabase filename
       });
+
       res.status(201).json(paper);
     } catch (err) {
-      console.log("DB error:", err.message);
+      console.log("Upload error:", err.message);
       res.status(500).json({ message: "Upload failed", error: err.message });
     }
   }
 );
+
 // DELETE paper (admin only)
 router.delete("/:id", requireAuth, requireAdmin, async (req, res) => {
   try {
     const paper = await Paper.findById(req.params.id);
     if (!paper) return res.status(404).json({ message: "Not found" });
 
-    await cloudinary.uploader.destroy(paper.cloudinaryId, {
-      resource_type: "raw",
-    });
+    // Delete from Supabase Storage
+    const { error } = await supabase.storage
+      .from("papers")
+      .remove([paper.cloudinaryId]);
+
+    if (error) console.log("Supabase delete error:", error);
+
     await paper.deleteOne();
     res.json({ message: "Deleted successfully" });
   } catch (err) {
