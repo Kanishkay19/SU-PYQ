@@ -7,11 +7,17 @@ const authRoutes = require("./routes/auth");
 const paperRoutes = require("./routes/papers");
 
 const app = express();
+// app.use(cors({
+//   origin: [
+//     "http://localhost:5173",
+//     "https://su-pyq.vercel.app"
+//   ]
+// }));
+
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://su-pyq.vercel.app"
-  ]
+  origin: "*",
+  methods: ["GET", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(express.json());
 
