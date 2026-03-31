@@ -7,17 +7,16 @@ function isMobile() {
 
 function getViewUrl(url) {
   if (isMobile()) {
-    // On mobile, directly open the PDF — Safari and Chrome both handle this
-    return url;
+    const pdfUrl = url.includes(".pdf") ? url : `${url}.pdf`;
+    return pdfUrl;
   }
-  // On desktop use Google Docs viewer
   return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}`;
 }
 
-function getDownloadUrl(url) {
-  // Strip any existing transformation flags
+function getDownloadUrl(url, fileName) {
   const base = url.replace(/\/upload\/[^/]*\//, "/upload/");
-  return base.replace("/upload/", "/upload/fl_attachment/");
+  const cleanName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+  return base.replace("/upload/", `/upload/fl_attachment:${cleanName}/`);
 }
 
 export default function PaperCard({ paper, isAdmin, onDelete, style }) {
@@ -49,7 +48,7 @@ export default function PaperCard({ paper, isAdmin, onDelete, style }) {
         </button>
         <button
           className="card-btn card-btn-dl"
-          onClick={() => window.open(getDownloadUrl(paper.cloudinaryUrl), "_blank")}
+          onClick={() => window.open(getDownloadUrl(paper.cloudinaryUrl, paper.fileName), "_blank")}
         >
           <IconDownload /> Download
         </button>
