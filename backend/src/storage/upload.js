@@ -11,16 +11,14 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
-    console.log("Cloudinary config:", {
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY ? "set" : "NOT SET",
-      api_secret: process.env.CLOUDINARY_API_SECRET ? "set" : "NOT SET",
-    });
+    const cleanName = file.originalname
+      .replace(".pdf", "")
+      .replace(/[^a-zA-Z0-9_-]/g, "_"); // remove special characters
     return {
       folder: "su-pyq",
       resource_type: "raw",
-      allowed_formats: ["pdf"],
-      public_id: file.originalname.replace(".pdf", ""),
+      format: "pdf",
+      public_id: `${cleanName}_${Date.now()}`, // unique name
     };
   },
 });
