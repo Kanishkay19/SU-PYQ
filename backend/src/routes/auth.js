@@ -1,28 +1,65 @@
-const router = require("express").Router();
-const jwt = require("jsonwebtoken");
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const authRoutes = require("./routes/auth");
+const paperRoutes = require("./routes/papers");
 
-const USERS = {
-  admin:   { password: "sherry121", role: "admin",   name: "admin" },
-  student: { password: "student",   role: "user",    name: "student" },
-};
+const app = express();
 
-router.post("/login", (req, res) => {
-  const { username, password } = req.body;
-  const user = USERS[username];
+// ✅ Use this for now
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
-  if (!user || user.password !== password)
-    return res.status(401).json({ message: "Invalid credentials" });
+app.use(express.json());
 
-  const token = jwt.sign(
-    { id: username, role: user.role, name: user.name },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" }
-  );
+app.use("/api/auth", authRoutes);
+app.use("/api/papers", paperRoutes);
 
-  res.json({ token, role: user.role, name: user.name });
-});
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log("MongoDB connected");
+    app.listen(process.env.PORT || 5000, () =>
+      console.log(`Server running on port ${process.env.PORT || 5000}`)
+    );
+  })
+  .catch((err) => console.error(err));
 
-module.exports = router;
+
+
+// const router = require("express").Router();
+// const jwt = require("jsonwebtoken");
+
+// const USERS = {
+//   admin:   { password: "sherry121", role: "admin",   name: "admin" },
+//   student: { password: "student",   role: "user",    name: "student" },
+// };
+
+// router.post("/login", (req, res) => {
+//   const { username, password } = req.body;
+//   const user = USERS[username];
+
+//   if (!user || user.password !== password)
+//     return res.status(401).json({ message: "Invalid credentials" });
+
+//   const token = jwt.sign(
+//     { id: username, role: user.role, name: user.name },
+//     process.env.JWT_SECRET,
+//     { expiresIn: "7d" }
+//   );
+
+//   res.json({ token, role: user.role, name: user.name });
+// });
+
+// router.get("/test", (req, res) => {
+//   res.json({ message: "auth route working", users: Object.keys(USERS) });
+// });
+
+// module.exports = router;
 
 
 
