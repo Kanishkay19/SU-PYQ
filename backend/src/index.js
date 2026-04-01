@@ -1,24 +1,24 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-// require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
 const paperRoutes = require("./routes/papers");
 
 const app = express();
-// app.use(cors({
-//   origin: [
-//     "http://localhost:5173",
-//     "https://su-pyq.vercel.app"
-//   ]
-// }));
-
 app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  origin: [
+    "http://localhost:5173",
+    "https://su-pyq.vercel.app"
+  ]
 }));
+
+// app.use(cors({
+//   origin: "*",
+//   methods: ["GET", "POST", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"]
+// }));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);

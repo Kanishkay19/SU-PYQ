@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Paper = require("../models/Paper");
+const Paper = require("../models/paper");
 const { requireAuth, requireAdmin } = require("../middleware/auth");
 const upload = require("../storage/upload");
 const supabase = require("../storage/supabase");
@@ -43,13 +43,14 @@ router.post(
         .from("papers")
         .getPublicUrl(fileName);
 
+      // ✅ Using correct field names matching our updated model
       const paper = await Paper.create({
         subject,
         year: parseInt(year),
         semester,
         fileName: req.file.originalname,
-        cloudinaryUrl: urlData.publicUrl, // reusing field name, now stores Supabase URL
-        cloudinaryId: fileName,           // reusing field name, now stores Supabase filename
+        supabaseUrl: urlData.publicUrl,  // ✅ fixed
+        supabasePath: fileName,          // ✅ fixed
       });
 
       res.status(201).json(paper);
@@ -66,10 +67,10 @@ router.delete("/:id", requireAuth, requireAdmin, async (req, res) => {
     const paper = await Paper.findById(req.params.id);
     if (!paper) return res.status(404).json({ message: "Not found" });
 
-    // Delete from Supabase Storage
+    // ✅ Using correct field name for Supabase deletion
     const { error } = await supabase.storage
       .from("papers")
-      .remove([paper.cloudinaryId]);
+      .remove([paper.supabasePath]);
 
     if (error) console.log("Supabase delete error:", error);
 
