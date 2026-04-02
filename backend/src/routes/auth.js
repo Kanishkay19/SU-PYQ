@@ -29,6 +29,9 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+router.get("/test", (req, res) => {
+  res.json({ message: "auth route working" });
+});
 
 module.exports = router;
 

@@ -10,7 +10,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://su-pyq.vercel.app"
+    "https://su-pyq-phi.vercel.app"
   ]
 }));
 
