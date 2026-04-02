@@ -39,13 +39,13 @@ export default function PaperCard({ paper, isAdmin, onDelete, style }) {
       <div className="card-actions">
         <button
           className="card-btn card-btn-view"
-          onClick={() => window.open(getViewUrl(paper.cloudinaryUrl), "_blank")}
+          onClick={() => window.open(getViewUrl(paper.supabaseUrl), "_blank")}
         >
           <IconEye /> View
         </button>
         <button
           className="card-btn card-btn-dl"
-          onClick={() => window.open(getDownloadUrl(paper.cloudinaryUrl), "_blank")}
+          onClick={() => window.open(getDownloadUrl(paper.supabaseUrl), "_blank")}
         >
           <IconDownload /> Download
         </button>
