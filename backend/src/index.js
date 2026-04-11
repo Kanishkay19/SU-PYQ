@@ -2,23 +2,26 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
 const authRoutes = require("./routes/auth");
 const paperRoutes = require("./routes/papers");
 const mailRoutes = require("./routes/mail");
 
 const app = express();
-app.use(cors({
+
+const corsOptions = {
   origin: [
     "http://localhost:5173",
-    "su-pyq.vercel.app"
-    
+    "https://su-pyq.vercel.app"
   ],
   methods: ["GET", "POST", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
-}));
-  app.use(express.json());
-  
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // supposed to handle preflight
+
+app.use(express.json());
+
 app.use("/api/mail", mailRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/papers", paperRoutes);
