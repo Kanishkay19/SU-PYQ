@@ -5,6 +5,7 @@ const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
 const paperRoutes = require("./routes/papers");
+const mailRoutes = require("./routes/mail");
 
 const app = express();
 app.use(cors({
@@ -15,12 +16,13 @@ app.use(cors({
 }));
 
 // app.use(cors({
-//   origin: "*",
-//   methods: ["GET", "POST", "DELETE", "OPTIONS"],
-//   allowedHeaders: ["Content-Type", "Authorization"]
-// }));
-app.use(express.json());
-
+  //   origin: "*",
+  //   methods: ["GET", "POST", "DELETE", "OPTIONS"],
+  //   allowedHeaders: ["Content-Type", "Authorization"]
+  // }));
+  app.use(express.json());
+  
+app.use("/api/mail", mailRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/papers", paperRoutes);
 

@@ -128,19 +128,15 @@ export default function App() {
         </div>
 
         <PapersGrid
-          papers={filtered}
-          isAdmin={user.role === "admin"}
-          onDelete={handleDelete}
-        />
+  papers={filtered}
+  user={user}
+  onDelete={handleDelete}
+/>
       </main>
 
-      {/* Admin FAB */}
-      {user.role === "admin" && (
-        <button className="fab" onClick={() => setShowUpload(true)}>
-          <IconUpload /> Upload Paper
-        </button>
-      )}
-
+      <button className="fab" onClick={() => setShowUpload(true)}>
+  <IconUpload /> Upload Paper
+</button>
       {showUpload && (
         <UploadModal
           onClose={() => setShowUpload(false)}

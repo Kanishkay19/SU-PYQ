@@ -6,22 +6,20 @@ function isMobile() {
 }
 
 function getViewUrl(url) {
-  if (isMobile()) {
-    return url; // direct URL, now that PDF delivery is enabled it should work
-  }
+  if (isMobile()) return url;
   return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}`;
 }
 
-function getDownloadUrl(url) {
-  return url; // direct URL works for download too now that PDF delivery is enabled
-}
+export default function PaperCard({ paper, user, onDelete, style }) {
+  // show delete if admin OR if this paper belongs to the logged in user
+  const canDelete =
+    user.role === "admin" || paper.uploaderEmail === user.name;
 
-export default function PaperCard({ paper, isAdmin, onDelete, style }) {
   return (
     <div className="paper-card" style={style}>
       <div className="card-header">
         <div className="card-pdf-icon"><IconPDF /></div>
-        {isAdmin && (
+        {canDelete && (
           <div className="card-admin-actions">
             <button className="card-del-btn" onClick={onDelete} title="Delete">
               <IconTrash />
@@ -35,7 +33,10 @@ export default function PaperCard({ paper, isAdmin, onDelete, style }) {
         <span className="meta-pill">Sem {paper.semester}</span>
       </div>
       <div className="card-filename">📄 {paper.fileName}</div>
-      <div className="card-uploaded">Uploaded: {fmtDate(paper.createdAt)}</div>
+      <div className="card-uploaded">
+        Uploaded by: <strong>{paper.uploaderEmail}</strong>
+      </div>
+      <div className="card-uploaded">{fmtDate(paper.createdAt)}</div>
       <div className="card-actions">
         <button
           className="card-btn card-btn-view"
@@ -45,7 +46,7 @@ export default function PaperCard({ paper, isAdmin, onDelete, style }) {
         </button>
         <button
           className="card-btn card-btn-dl"
-          onClick={() => window.open(getDownloadUrl(paper.supabaseUrl), "_blank")}
+          onClick={() => window.open(paper.supabaseUrl, "_blank")}
         >
           <IconDownload /> Download
         </button>

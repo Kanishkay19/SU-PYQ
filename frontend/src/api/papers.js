@@ -1,4 +1,5 @@
 const BASE = "https://su-pyq.onrender.com/api";
+// const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 function getToken() {
   return localStorage.getItem("token");
@@ -9,14 +10,37 @@ function authHeaders() {
 }
 
 // ── Auth ──────────────────────────────────────────────────────
-export async function login(username, password) {
-  const res = await fetch(`${BASE}/auth/login`, {
+export async function requestOtp(email) {
+  const res = await fetch(`${BASE}/auth/request-otp`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ email }),
   });
-  if (!res.ok) throw new Error("Invalid credentials");
   const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Failed to send OTP");
+  return data;
+}
+
+export async function verifyOtp(email, otp) {
+  const res = await fetch(`${BASE}/auth/verify-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, otp }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Invalid OTP");
+  localStorage.setItem("token", data.token);
+  return data;
+}
+
+export async function adminLogin(password) {
+  const res = await fetch(`${BASE}/auth/admin-login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Invalid credentials");
   localStorage.setItem("token", data.token);
   return data;
 }
@@ -37,7 +61,7 @@ export async function fetchPapers() {
 export async function uploadPaper(formData) {
   const res = await fetch(`${BASE}/papers`, {
     method: "POST",
-    headers: authHeaders(), // no Content-Type — browser sets multipart automatically
+    headers: authHeaders(),
     body: formData,
   });
   if (!res.ok) throw new Error("Upload failed");

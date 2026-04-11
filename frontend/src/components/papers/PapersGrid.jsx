@@ -1,6 +1,6 @@
 import PaperCard from "./PaperCard";
 
-export default function PapersGrid({ papers, isAdmin, onDelete }) {
+export default function PapersGrid({ papers, user, onDelete }) {
   if (papers.length === 0) {
     return (
       <div className="empty">
@@ -17,7 +17,7 @@ export default function PapersGrid({ papers, isAdmin, onDelete }) {
         <PaperCard
           key={p._id}
           paper={p}
-          isAdmin={isAdmin}
+          user={user}
           onDelete={() => onDelete(p._id)}
           style={{ animationDelay: `${i * 0.04}s` }}
         />
