@@ -24,8 +24,11 @@ app.use("/api/mail", mailRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/papers", paperRoutes);
 
-mongoose
-  .connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, {
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 45000,
+  family: 4
+})
   .then(() => {
     console.log("MongoDB connected");
     app.listen(process.env.PORT, () =>
