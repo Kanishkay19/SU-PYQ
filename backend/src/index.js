@@ -8,17 +8,15 @@ const mailRoutes = require("./routes/mail");
 
 const app = express();
 
-const corsOptions = {
+app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://su-pyq.vercel.app"
   ],
   methods: ["GET", "POST", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-};
-
-app.use(cors(corsOptions));
-app.options("/(.*)", cors(corsOptions)); //v2 of preflight handling
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
 
 app.use(express.json());
 
