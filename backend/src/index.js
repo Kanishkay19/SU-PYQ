@@ -11,15 +11,11 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://su-pyq-phi.vercel.app"
-  ]
+    "https://su-pyq.vercel.app"
+  ],
+  methods: ["GET", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
-
-// app.use(cors({
-  //   origin: "*",
-  //   methods: ["GET", "POST", "DELETE", "OPTIONS"],
-  //   allowedHeaders: ["Content-Type", "Authorization"]
-  // }));
   app.use(express.json());
   
 app.use("/api/mail", mailRoutes);
