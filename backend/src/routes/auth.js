@@ -88,6 +88,10 @@ router.post("/admin-login", async (req, res) => {
   }
 });
 
+router.get("/test", (req, res) => {
+  res.json({ message: "Backend is alive" });
+});
+
 module.exports = router;
 
 
