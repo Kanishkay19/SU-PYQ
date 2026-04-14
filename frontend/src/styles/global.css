@@ -236,4 +236,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(
   .login-card { padding: 36px 24px; }
   .form-row { grid-template-columns: 1fr; }
   .fab { bottom: 20px; right: 16px; padding: 13px 18px; }
+  .header { padding: 0 12px; height: auto; min-height: 68px; flex-wrap: wrap; gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+  .header-logo { font-size: 1.3rem; }
+  .header-logo span { display: none; }
+  .header-right { gap: 8px; }
+  .badge { font-size: 0.65rem; padding: 3px 8px; }
+  .header-right span { font-size: 0.72rem; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .icon-btn { padding: 6px 10px; font-size: 0.78rem; }
+  .filters-row { gap: 8px; }
+  .filter-sep { display: none; }
+  .filter-label { font-size: 0.72rem; }
+  .filter-chip { padding: 5px 12px; font-size: 0.75rem;}
 }
