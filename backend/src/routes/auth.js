@@ -70,23 +70,49 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
-// Admin login
+
 router.post("/admin-login", async (req, res) => {
   try {
     const { password } = req.body;
-    if (password !== ADMIN_PASSWORD)
+
+    if (password !== ADMIN_PASSWORD) {
       return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    let adminUser = await User.findOne({ email: ADMIN_EMAIL });
+
+    if (!adminUser) {
+      adminUser = await User.create({
+        email: ADMIN_EMAIL,
+        role: "admin"
+      });
+    }
 
     const token = jwt.sign(
-      { id: "admin", role: "admin", email: ADMIN_EMAIL },
+      {
+        id: adminUser._id,
+        role: "admin",
+        email: adminUser.email
+      },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    res.json({ token, role: "admin", email: ADMIN_EMAIL });
+
+    res.json({
+      token,
+      role: "admin",
+      email: adminUser.email
+    });
+
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(500).json({
+      message: "Server error",
+      error: err.message
+    });
   }
 });
+
+
 
 router.get("/test", (req, res) => {
   res.json({ message: "Backend is alive" });
